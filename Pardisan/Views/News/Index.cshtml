@@ -1,0 +1,83 @@
+﻿@model Pardisan.ViewModels.NewsIndexViewModel
+@using DNTPersianUtils.Core;
+
+@{
+    ViewData["Title"] = "اخبار";
+    var activeNews = Model.News.Where(w => w.IsActive == true).ToList();
+
+}
+
+
+<section class="banner_area">
+    <div class="container">
+        <h1 class="text-white IRANSans_Bold">اخبار</h1>
+        <div class="breadcrumb_content">
+            <ul>
+                <li><a asp-action="index" asp-controller="home">صفحه اصلی</a></li>
+                <li><a asp-action="index" asp-controller="news">اخبار</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+
+<section class="container p-md-5 p-4 ">
+    @if (activeNews.Count() > 0)
+    {
+        <div class="d-flex flex-row mb-4">
+            <div class="Dottedstocol ml-3"></div>
+            <div class="singletitle">
+                <span>اخبار</span>
+            </div>
+        </div>
+        <div class="row">
+            @foreach (var item in Model.News)
+            {
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="m-2 blog_style">
+                        <a asp-route-Id="@item.Id" asp-action="details"><img class="card-img-top" src="@item.Image" alt="Card image"></a>
+                        <div class="card-body">
+                            <h3 class="mb-2"><a asp-route-Id="@item.Id" asp-action="details">@item.Title</a></h3>
+                            <p class="mb-2">@item.Describtion</p>
+                            <span><a href="#">@item.CategoryTitle</a></span>
+
+                            <div class="d-flex flex-row justify-content-between mt-2">
+                                <div>
+                                    <span><i class="fal fa-clock ml-2"></i>@item.CreatedAt.ToPersianDateTextify(true)</span>
+                                </div>
+                                <a asp-route-Id="@item.Id" asp-action="details">ادامه مطلب »</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+        @*<div class="row mt-3">
+            <div class="col-12 text-center mx-auto">
+                <ul class="pagination  justify-content-center">
+                    <li class="page-item"><a class="page-link" href="#">«</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item "><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item "><a class="page-link" href="#">4</a></li>
+                    <li class="page-item"><a class="page-link" href="#">5</a></li>
+                    <li class="page-item"><a class="page-link" href="#">»</a></li>
+                </ul>
+            </div>
+        </div>*@
+
+    }
+    else
+    {
+        <div class="d-flex flex-row mb-4">
+            <div class="Dottedstocol ml-3"></div>
+            <div class="singletitle">
+                <span>اخبار</span>
+            </div>
+        </div>
+        <div class="row">
+            خبری وجود ندارد
+        </div>
+    }
+</section>

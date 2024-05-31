@@ -1,0 +1,210 @@
+﻿@model Pardisan.ViewModels.ViewCount.ViewCount
+@using DNTPersianUtils.Core;
+@{
+    Layout = "_AdminLayout";
+}
+
+@section styles{
+
+    <link href="~/css/bootstrap-tagsinput.css" rel="stylesheet" asp-append-version="true" />
+    <script src="~/ckeditor/ckeditor2.js"></script>
+    <link href="~/date/persianDatepicker-default.css" rel="stylesheet" />
+}
+@section vendors{
+    <script src="~/lib/Admin/assets/plugins/custom/cropper/cropper.bundle.js"></script>
+}
+@section scripts{
+    <script src="//static.neshan.org/sdk/leaflet/1.4.0/leaflet.js" type="text/javascript"></script>
+    <script src="~/js/bootstrap-tagsinput.js" asp-append-version="true"></script>
+    <script src="~/date/persianDatepicker.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            $.ajax({
+                url: '/admin/ViewCount/Data',
+                method: 'POST',
+                processData: false,
+                contentType: false,
+                success: data_arrived
+
+            })
+            function data_arrived(data) {
+                let daysVisit = data?.map(item => item?.day)
+                let visitCount = data?.map(item => item?.counts)
+                console.log(daysVisit)
+                console.log(visitCount)
+
+
+                var School = {
+                    label: "بازدید",
+                    data: visitCount,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1,
+                    lineTension: 0,
+                };
+
+                var datasetvalues = {
+                    labels: daysVisit, // x-azis label values
+                    datasets: [School] // y-axis
+                };
+
+                barChartOptions = {
+                    indexAxis: 'x',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: ''
+                        }
+                    },
+                    scales: {
+                        x: {
+                            barPercentage: 1,
+                            categoryPercentage: 0.6,
+                        },
+                        y: {
+                            barPercentage: 1,
+                            categoryPercentage: 0.6,
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                }
+
+                var verticalBarChart = new Chart(
+                    document.getElementById('bar-chart').getContext('2d'), {
+                    type: 'bar',
+                    data: datasetvalues,
+                    options: barChartOptions
+                });
+
+                horizonntalBarChartOptions = barChartOptions;
+                horizonntalBarChartOptions['indexAxis'] = 'y';
+                delete horizonntalBarChartOptions.scales;
+                console.log(barChartOptions);
+                var horizonntalBarChart = new Chart(
+                    document.getElementById('horizontal-bar-chart').getContext('2d'), {
+                    type: 'leane',
+                    data: datasetvalues,
+                    options: horizonntalBarChartOptions
+                });
+
+                pieChartOptions = barChartOptions;
+                delete pieChartOptions.indexAxis;
+                delete pieChartOptions.scales;
+
+                var pieChart = new Chart(
+                    document.getElementById('pie-chart').getContext('2d'), {
+                    type: 'pie',
+                    data: datasetvalues,
+                    options: pieChartOptions
+                });
+
+                var doughnutChart = new Chart(
+                    document.getElementById('doughnut-chart').getContext('2d'), {
+                    type: 'doughnut',
+                    data: datasetvalues,
+                    options: pieChartOptions
+                });
+
+                var polarAreaChart = new Chart(
+                    document.getElementById('polar-area-chart').getContext('2d'), {
+                    type: 'polarArea',
+                    data: datasetvalues,
+                    options: pieChartOptions
+                });
+
+
+
+            }
+
+        });
+        var countInput = document.getElementById('count-1');
+
+        $('#submit-formCreate').on('click', function () {
+            let form = document.getElementById('formCreate');
+            let formdata = new FormData(form);
+            $.ajax({
+                url: '/admin/ViewCount/Count',
+                data: formdata,
+                method: 'POST',
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    countInput.innerText = data
+                }
+            })
+        });
+        $("#From, .From").persianDatepicker();
+        $("#To, .To").persianDatepicker();
+
+
+
+
+
+
+    </script>
+}
+
+<div class="card card-custom mb-5">
+
+    <div class="text-center">
+        <h4 class="display-4"></h4>
+        <div class="card">
+            <div class="chart-container">
+                <canvas id="bar-chart" width="300" height="500"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <form asp-action="index" method="post" class=" form" id="formCreate" enctype="multipart/form-data" onsubmit="return false">
+
+            <div class="row">
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">از تاریخ </label>
+                        <input type="text" class="form-control" asp-for="From" placeholder="" required />
+                    </div>
+                </div>
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">تا تاریخ </label>
+                        <input readonly type="text" class="form-control" asp-for="To" placeholder="" required />
+                    </div>
+                </div>
+
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">تعداد </label>
+                        <p readonly type="text" class="fs-1" id="count-1" asp-for="To" placeholder="تعداد " required> </p>
+                    </div>
+                </div>
+                <div class="col-md-12 my-4">
+                </div>
+                <div class="d-flex justify-content-between w-100">
+                    <button id="submit-formCreate" type="button" class="btn btn-primary font-weight-bold">محاسبه</button>
+                </div>
+            </div>
+        </form>
+
+
+    </div>
+</div>

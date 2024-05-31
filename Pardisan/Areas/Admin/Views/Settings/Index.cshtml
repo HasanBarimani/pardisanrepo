@@ -1,0 +1,309 @@
+﻿@model Pardisan.ViewModels.Setting.SettingVM
+
+@{
+    Layout = "_AdminLayout";
+}
+
+@{
+    ViewBag.Title = "تنظیمات";
+}
+@section styles{
+    <link href="~/css/bootstrap-tagsinput.css" rel="stylesheet" asp-append-version="true" />
+    <script src="~/ckeditor/ckeditor2.js"></script>
+}
+
+@section scripts{
+    <script src="~/js/bootstrap-tagsinput.js" asp-append-version="true"></script>
+
+    <script>
+        $(function () {
+            FullCkEditor('StaticContent');
+        });
+        $(document).ready(function () {
+            theEditor.setData(document.getElementById("ContentValue").value);
+        });
+    </script>
+    <script>
+
+
+        $('#submit-settingsForm').on('click', function () {
+            let form = document.getElementById('settingsForm');
+            let formdata = new FormData(form);
+            formdata.append("StaticContent", theEditor.getData());
+            $.ajax({
+                url: "/admin/settings/submit",
+                data: formdata,
+                method: 'POST',
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    data.status == "0" ? Swal.fire('', data.message, 'error') : Swal.fire('', data.message, 'success');
+                }
+            });
+        });
+        $('#Image').change(function () {
+            var input = this;
+            var url = $(this).val();
+            var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+            if (input.files && input.files[0] && (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg")) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#thumbimage').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+            else {
+                $('#Image').attr('src', '/Uploads/tempimage.jpg');
+            }
+        });
+        $('#ImageDocs').change(function () {
+            var input = this;
+            var url = $(this).val();
+            var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+            if (input.files && input.files[0] && (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg")) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#thumbimageDocs').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+            else {
+                $('#ImageDocs').attr('src', '/Uploads/tempimage.jpg');
+            }
+        });
+    </script>
+   
+
+
+}
+
+<div class="container card card-custom card-sticky pb-5 " id="kt_page_sticky_card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between w-100">
+            <div class="card-title">
+
+                <h3 class="card-label">
+                    تنظیمات
+                </h3>
+            </div>
+            <div class="card-toolbar btn-group">
+                <a asp-action="index" class="btn btn-outline-primary font-weight-bold ">بازگشت</a>
+                <button id="submit-settingsForm" type="button" class="btn btn-primary font-weight-bold">ثبت</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <form method="post" class=" form" id="settingsForm">
+            <div class="row">
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">تلفن همراه </label>
+                        <input type="text" class="form-control" asp-for="Cellphone" required />
+                    </div>
+                </div>
+
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">تلفن ثابت </label>
+                        <input type="text" class="form-control" asp-for="Phone" required />
+                    </div>
+                </div>
+
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">ایمیل </label>
+                        <input type="text" class="form-control" asp-for="Email" required />
+                    </div>
+                </div>
+
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">آدرس اینستاگرام</label>
+                        <input type="text" class="form-control" asp-for="Instagram" required />
+                    </div>
+                </div>
+
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">آیدی تلگرام</label>
+                        <input type="text" class="form-control" asp-for="Telegram" required />
+                    </div>
+                </div>
+
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">آدرس توییتر</label>
+                        <input type="text" class="form-control" asp-for="Twitter" required />
+                    </div>
+                </div>
+
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">شماره واتساپ</label>
+                        <input type="text" class="form-control" asp-for="Whatsapp" required />
+                    </div>
+                </div>
+
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">ساعت کاری</label>
+                        <input type="text" class="form-control" asp-for="WorkTime" required />
+                    </div>
+                </div>
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">عنوان ویدیو ها</label>
+                        <input type="text" class="form-control" asp-for="VideosTitle" required />
+                    </div>
+                </div>
+
+                <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">آدرس</label>
+                        <input type="text" class="form-control" asp-for="Address" required />
+                    </div>
+                </div>
+                <div class="col-md-8 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">متن زیر اسلایدر صفحه اصلی</label>
+                        <input type="text" class="form-control" asp-for="UnderSliderText" placeholder="متن زیر اسلایدر صفحه اصلی" required />
+                    </div>
+                </div>
+                <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">خدمات ما</label>
+                        <textarea asp-for="OurServices" class="form-control" rows="4"></textarea>
+                    </div>
+                </div>   <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">مصالح باکیفیت</label>
+                        <textarea asp-for="QualityMaterials" class="form-control" rows="4"></textarea>
+                    </div>
+                </div>   <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">طراحی نمای مدرن</label>
+                        <textarea asp-for="modernView" class="form-control" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3"> استحکام بالا</label>
+                        <textarea asp-for="HighStrength" class="form-control" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">پشتیبانی مادام‌العمر</label>
+                        <textarea asp-for="LifetimeSupport" class="form-control" rows="4"></textarea>
+                    </div>
+                </div>  <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">عنوان مشاوره</label>
+                        <input type="text" asp-for="CounselingTitle" class="form-control" rows="4" />
+                    </div>
+                </div>
+                <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">محتوای مشاوره</label>
+                        <textarea asp-for="CounselingContent" class="form-control" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">محنوای ثابت </label>
+                        <div id="toolbar-container"></div>
+                        <input id="ContentValue" value="@Model?.StaticContent" hidden type="hidden" />
+                        <div id="StaticContent" name="StaticContent" class="form-control border"></div>
+                    </div>
+                </div>
+                <div class="col-md-6 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">واحد های تحویل داده شده </label>
+                        <input type="text" class="form-control" asp-for="SailedUnits" required />
+                    </div>
+                </div> <div class="col-md-6 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">معرفی پروژه ها </label>
+                        <input type="text" class="form-control" asp-for="InterduceProject" required />
+                    </div>
+                </div> <div class="col-md-6 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">عنوان لینک اول </label>
+                        <input type="text" class="form-control" asp-for="FirstLinkName" required />
+                    </div>
+                </div> <div class="col-md-6 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3"> لینک اول </label>
+                        <input type="text" class="form-control" asp-for="FirstLink" required />
+                    </div>
+                </div> <div class="col-md-6 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">عنوان لینک دوم </label>
+                        <input type="text" class="form-control" asp-for="SecondLinkName" required />
+                    </div>
+                </div> <div class="col-md-6 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">لینک دوم</label>
+                        <input type="text" class="form-control" asp-for="SecondLink" required />
+                    </div>
+                </div> <div class="col-md-6 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">عنوان لینک سوم</label>
+                        <input type="text" class="form-control" asp-for="ThirdLinkName" required />
+                    </div>
+                </div> <div class="col-md-6 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3"> لینک سوم </label>
+                        <input type="text" class="form-control" asp-for="ThirdLink" required />
+                    </div>
+                </div>
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3"> عنوان صفحه مقالات </label>
+                        <input type="text" class="form-control" asp-for="titleForBlogs" required />
+                    </div>
+                </div>
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3"> عنوان صفحه معرفی پروژه ها </label>
+                        <input type="text" class="form-control" asp-for="titleForProject" required />
+                    </div>
+                </div>
+                <div class="col-md-4 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3"> عنوان صفحه ویدیوها </label>
+                        <input type="text" class="form-control" asp-for="titleForVideos" required />
+                    </div>
+                </div>
+                <div class="col-md-6 form-group my-5">
+
+                    <label class="h5 font-weight-bolder text-dark mb-1">زمینه صفحات</label>
+                    <br />
+                    <label for="Image" class="btn btn-light mx-3 mt-2">انتخاب عکس</label>
+                    <input asp-for="Image" class="d-none" type="file" style="visibility:hidden;" />
+
+                    @*<span class="text-justify">@Model?.ImageShow.Substring(Model.ImageShow.LastIndexOf("/") + 1)</span>*@
+                    <div class="mt-4" style="max-width:50% !important;">
+                        <img id="thumbimage" class="img img-thumbnail" src="@Model?.ImageShow" />
+                    </div>
+                </div>
+                <div class="col-md-6 form-group my-5">
+
+                    <label class="h5 font-weight-bolder text-dark mb-1">زمینه آمار</label>
+                    <br />
+                    <label for="ImageDocs" class="btn btn-light mx-3 mt-2">انتخاب عکس</label>
+                    <input asp-for="ImageDocs" class="d-none" type="file" style="visibility:hidden;" />
+
+                    @*<span class="text-justify">@Model?.ImageShow.Substring(Model.ImageShow.LastIndexOf("/") + 1)</span>*@
+                    <div class="mt-4" style="max-width:50% !important;">
+                        <img id="thumbimageDocs" class="img img-thumbnail" src="@Model?.ImageDocsShow" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

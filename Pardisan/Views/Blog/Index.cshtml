@@ -1,0 +1,69 @@
+﻿@model Pardisan.ViewModels.Blog.BlogIndexViewModel
+@using DNTPersianUtils.Core;
+
+@{
+    ViewData["Title"] = "مقالات";
+    var activeBlog = Model.Blog.Where(w => w.IsActive == true).ToList();
+
+}
+
+
+<section class="banner_area">
+    <div class="container">
+        <h1 class="text-white IRANSans_Bold">مقالات</h1>
+        <div class="breadcrumb_content">
+            <ul>
+                <li><a asp-action="index" asp-controller="home">صفحه اصلی</a></li>
+                <li><a asp-action="index" asp-controller="blog">مقالات</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+
+<section class="container p-md-5 p-4 ">
+    @if (activeBlog.Count() > 0)
+    {
+        <div class="d-flex flex-row mb-4">
+            <div class="Dottedstocol ml-3"></div>
+            <div class="singletitle">
+                <span>مقالات سایت</span>
+            </div>
+        </div>
+        <div class="row">
+            @foreach (var item in Model.Blog)
+            {
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="m-2 blog_style">
+                        <a asp-route-Id="@item.Id" asp-action="details"><img class="card-img-top" src="@item.Image" alt="Card image"></a>
+                        <div class="card-body">
+                            <h3 class="mb-2"><a asp-route-Id="@item.Id" asp-action="details">@item.Title</a></h3>
+                            <p class="mb-2">@item.Describtion</p>
+                            <span><a href="#">@item.CategoryTitle</a></span>
+
+                            <div class="d-flex flex-row justify-content-between mt-2">
+                                <div>
+                                    <span><i class="fal fa-clock ml-2"></i>@item.CreatedAt.ToPersianDateTextify(true)</span>
+                                </div>
+                                <a asp-route-Id="@item.Id" asp-action="details">ادامه مطلب »</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="d-flex flex-row mb-4">
+            <div class="Dottedstocol ml-3"></div>
+            <div class="singletitle">
+                <span>مقالات سایت</span>
+                <h1 class="text-right">دسته مقالات مربوط به مهندسی سازه  </h1>
+            </div>
+        </div>
+        <div class="row">
+            مقاله ای وجود ندارد
+        </div>
+    }
+</section>

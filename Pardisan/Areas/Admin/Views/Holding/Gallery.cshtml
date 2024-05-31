@@ -1,0 +1,66 @@
+﻿@model Pardisan.ViewModels.Holding.HoldingImageVm
+@{
+    Layout = "_AdminLayout";
+}
+
+@section styles{
+
+    <link rel="stylesheet" href="~/admin/vendors/lightbox/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="~/admin/vendors/dataTable/dataTables.min.css" type="text/css">
+
+    <style>
+        #table_filter > input {
+            margin-right: 5% !important;
+        }
+    </style>
+}
+@section vendors{
+    <script src="~/lib/Admin/assets/plugins/custom/cropper/cropper.bundle.js"></script>
+}
+@section scripts{
+    <script src="~/admin/vendors/lightbox/jquery.magnific-popup.min.js"></script>
+    <script src="~/lib/momentjs/moment.min.js" asp-append-version="true"></script>
+    <script src="~/admin/vendors/dataTable/jquery.dataTables.min.js"></script>
+    <script src="~/admin/vendors/dataTable/dataTables.bootstrap4.min.js"></script>
+    <script src="~/admin/vendors/dataTable/dataTables.responsive.min.js"></script>
+    <script src="~/Admin/js/Holding/gallery.js"></script>
+}
+
+
+<input hidden asp-for="HoldingId" />
+<div class="card card-custom mb-5">
+    <div class="card-header">
+        <div class="card-title">
+            <span class="card-icon">
+                <i class="flaticon2-supermarket text-primary"></i>
+            </span>
+            <h3 class="card-label">گالری</h3>
+        </div>
+
+        <div class="card-toolbar">
+            <div class="btn-group">
+                @*<a asp-controller="Estate" asp-action="upsert" class="btn btn-primary font-weight-bolder">ثبت رکورد جدید</a>*@
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class=" d-flex justify-content-end card-toolbar custom-switch custom-checkbox-danger ml-auto">
+            <input type="checkbox" class="custom-control-input" id="showdelted" name="delted" onchange="SwitchDeleted()">
+            <label class="custom-control-label mx-2" for="showdelted">حذف شده ها</label>
+        </div>
+        <div class="table-responsive">
+            <table class="ajax-data-table table table-hover table-striped" id="Table">
+                <thead>
+                    <tr>
+                        <th class="all">#</th>
+                        <th class="all">تصویر</th>
+                        <th class="all">اقدامات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+   
+    </div>
+</div>

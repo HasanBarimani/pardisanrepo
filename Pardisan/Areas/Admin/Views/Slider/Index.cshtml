@@ -1,0 +1,110 @@
+﻿@model List<Pardisan.Models.Slider>
+@{
+    Layout = "_AdminLayout";
+}
+
+@section styles{
+
+    <link rel="stylesheet" href="~/admin/vendors/lightbox/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="~/admin/vendors/dataTable/dataTables.min.css" type="text/css">
+
+    <style>
+        #table_filter > input {
+            margin-right: 5% !important;
+        }
+    </style>
+}
+@section vendors{
+    <script src="~/lib/Admin/assets/plugins/custom/cropper/cropper.bundle.js"></script>
+}
+@section scripts{
+    <script src="~/admin/vendors/lightbox/jquery.magnific-popup.min.js"></script>
+    <script src="~/lib/momentjs/moment.min.js" asp-append-version="true"></script>
+    <script src="~/admin/vendors/dataTable/jquery.dataTables.min.js"></script>
+    <script src="~/admin/vendors/dataTable/dataTables.bootstrap4.min.js"></script>
+    <script src="~/admin/vendors/dataTable/dataTables.responsive.min.js"></script>
+<script>
+    function DeleteItem(id) {
+        Swal.fire({
+            title: '',
+            text: "آیا مطمئن به حذف هستید؟",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'بله',
+            cancelButtonText: 'خیر',
+            confirmButtonClass: 'btn btn-primary',
+            cancelButtonClass: 'btn btn-danger ml-1',
+            buttonsStyling: false,
+        }).then(function (result) {
+            if (result.value) {
+                $.ajax({
+                    type: "POST",
+                    url: '/admin/slider/DisableSlider?Id=' + id,
+                    beforeSend: function () { $("button").prop("disabled", true); },
+                    complete: function () { $("button").prop("disabled", false); },
+                    success: function (data) {
+                        data.status == "0" ? Swal.fire('', data.message, 'error') : Swal.fire('', data.message, 'success');
+                        location.reload();
+                    }
+                });
+            }
+
+        });
+    }
+</script>
+}
+
+<div class="card card-custom mb-5">
+    <div class="card-header">
+        <div class="card-title">
+            <span class="card-icon">
+                <i class="flaticon2-supermarket text-primary"></i>
+            </span>
+            <h3 class="card-label">لیست اسلایدر ها</h3>
+        </div>
+        <div class="card-toolbar">
+            <div class="btn-group">
+                <a asp-controller="Slider" asp-action="Create" class="btn btn-primary font-weight-bolder">ثبت رکورد جدید</a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class=" d-flex justify-content-end card-toolbar custom-switch custom-checkbox-danger ml-auto">
+            @*<input type="checkbox" class="custom-control-input" id="showdelted" name="delted" onchange="SwitchDeleted()">*@
+            @*<label class="custom-control-label mx-2" for="showdelted">حذف شده ها</label>*@
+        </div>
+        <div class="table-responsive">
+            <table class="ajax-data-table table table-hover table-striped" id="Table">
+                <thead>
+                    <tr>
+                        <th class="all">#</th>
+                        <th class="all"></th>
+                        <th class="all">اقدامات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ 
+                        int counter = 1;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <td>
+                                @counter
+                            </td>
+                            <td>
+                                <img style="max-width:50%" src="@item.Url" />
+                            </td>
+                            <td>
+                                <button onclick="DeleteItem(@item.Id)" class="btn btn-youtube"><i class="fa fa-trash"></i></button>
+                            </td>
+
+                        </tr>
+                        counter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

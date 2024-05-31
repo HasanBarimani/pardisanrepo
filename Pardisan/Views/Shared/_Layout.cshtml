@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>پردیسان - @ViewData["Title"]</title>
+    <link rel="shortcut icon" href="/Img/pardisanfavicon.png" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="~/Css/Main.css" rel="stylesheet" />
+    <link href="~/Css/Style.css" rel="stylesheet" />
+    <link href="~/Css/Menu-demo2.css" rel="stylesheet" />
+    <link href="~/Css/owl.carousel.min.css" rel="stylesheet" />
+    <link href="~/Css/owl.theme.min.css" rel="stylesheet" />
+    <link href="~/Css/hoverimg.css" rel="stylesheet" />
+</head>
+<body class="demo2">
+    <div class="main_wrap">
+        <div class="of-site-mask"></div>
+
+        <div class="off-canvas-wrap ">
+            <div class="close-off-canvas-wrap">
+                <a href="#" id="of-close-off-canvas">
+                    <i class="fal fa-times"></i>
+                </a>
+            </div>
+            <div class="off-canvas-inner">
+                <div id="of-mobile-nav" class="mobile-menu-wrap">
+                    <ul class="mobile-menu">
+
+                        <li> <a asp-controller="Home" asp-action="Index">صفحه اصلی</a> </li>
+                        <li> <a asp-controller="News" asp-action="Index">اخبار</a> </li>
+                        <li> <a asp-controller="Blog" asp-action="Index">مقالات</a> </li>
+                        <li> <a asp-controller="Project" asp-action="Index">پروژه ها</a> </li>
+                        <li> <a asp-controller="Home" asp-action="Achievement">دستاوردها</a> </li>
+                        <li> <a asp-controller="Home" asp-action="Certificate">گواهینامه ها</a> </li>
+                        <li> <a asp-controller="Home" asp-action="OurTeam">تیم ما</a> </li>
+                        <li><a asp-controller="Home" asp-action="Services">خدمات ما</a></li>
+                        <li><a asp-controller="Home" asp-action="AboutUs">درباره ما</a></li>
+                        <li><a asp-controller="Home" asp-action="ContactUs">تماس باما</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <header class="main_header wide_header">
+            <div class="header_container">
+
+                <div class="menu_wrapper menu_sticky">
+                    <div class="container tophead d-md-block d-none py-1">
+                        <div class="row">
+
+                            <div class="col-lg-6 h-info text-right IRANSans_Medium">
+                                <span class="text-white"><i class="fal fa-clock ml-2"></i>ساعت کاری : شنبه تا چهارشنبه - 8 تا 20</span>
+                                <span class="text-white mx-3"><i class="fal fa-phone ml-2"></i>01142270000</span>
+                                <span class="text-white"><i class="fal fa-envelope ml-2"></i>Info@pardisan.com</span>
+                            </div>
+                            <div class="col-lg-6  text-left">
+                                <ul class="social-list">
+                                    <li><a href="#"><i class="fab fa-whatsapp"></i></a></li>
+                                    <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+                                    <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container p_relative mobnav bg-cudark">
+                        <div id="navigation" class="of-drop-down of-main-menu" role="navigation">
+                            <ul class="menu">
+                                <li class="ml-3 test">
+                                    <a href="#" class="current logo">
+                                        <img src="~/img/niknet-white.png" style="max-width: 15vw;" />
+                                    </a>
+                                </li>
+
+                                <li> <a asp-controller="Home" asp-action="Index">صفحه اصلی</a> </li>
+                                <li> <a asp-controller="News" asp-action="Index">اخبار</a> </li>
+                                <li> <a asp-controller="Blog" asp-action="Index">مقالات</a> </li>
+                                <li> <a asp-controller="Project" asp-action="Index">پروژه ها</a> </li>
+                                <li> <a asp-controller="Home" asp-action="Achievement">دستاوردها</a> </li>
+                                <li> <a asp-controller="Home" asp-action="Certificate">گواهینامه ها</a> </li>
+                                <li> <a asp-controller="Home" asp-action="OurTeam">تیم ما</a> </li>
+                                <li><a asp-controller="Home" asp-action="Services">خدمات ما</a></li>
+                                <li><a asp-controller="Home" asp-action="AboutUs">درباره ما</a></li>
+                                <li><a asp-controller="Home" asp-action="ContactUs">تماس باما</a></li>
+
+                            </ul>
+                        </div>
+                        <div class="m_search pt-md-1">
+                            <i class="fal fa-search"></i>
+
+                        </div>
+                        <div class="is-show mobile-nav-button">
+                            <img src="~/img/niknet-white.png" style="max-width: 15vw;" />
+                            <a id="of-trigger" class="icon-wrap pr-3" href="#"> <i class="fal fa-bars"></i></a>
+                        </div>
+
+                        <form class="search_wrap mt-lg-0" id="ajax-form-search" method="get" action="">
+
+                            <input type="text" id="search-form-text" class="search-field" value="" name="s" placeholder="کلید واژه مورد نظر ...">
+                            <button><i class="fal fa-search"></i></button>
+
+                            <input type="hidden" name="post_type" value="product">
+                            <div id="ajax-search-result"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="clearfix"></div>
+
+        <div>
+            @RenderBody()
+        </div>
+
+        @*<div class="container">
+                <main role="main" class="pb-3">
+                </main>
+            </div>*@
+    </div>
+
+    <footer class="mt-5 pt-5 pb-2">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="pr-xl-4 mb-2 text-right address">
+                        <img src="~/img/niknet-white.png" style="width:45% !important" />
+                        <p class="mb-3"><i class="fal fa-map-marker-alt ml-2"></i> مازندران - قائمشهر - خیابان بابل </p>
+                        <p class="mb-3"><i class="fal fa-mobile ml-2"></i>شماره همراه : 09124567893</p>
+                        <p class="mb-3"><i class="fal fa-phone ml-2"></i>شماره تماس : 01142270000</p>
+                        <p class="mb-3"><i class="fal fa-envelope ml-2"></i>Info@pardisan.com</p>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-6 mb-3">
+                    <h3>لینک های سریع </h3>
+                    <ul>
+                        <li>
+                            <a asp-controller="Home" asp-action="AboutUs"><i class="fal fa-angle-left ml-2"></i>درباره ما</a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="Home" asp-action="Services"><i class="fal fa-angle-left ml-2"></i>خدمات ما</a>
+                        </li>
+                        <li>
+                            <a asp-controller="Project" asp-action="Index"><i class="fal fa-angle-left ml-2"></i>پروژه ها</a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="News" asp-action="Index"><i class="fal fa-angle-left ml-2"></i>وبلاگ ما</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fal fa-angle-left ml-2"></i>پرسش و پاسخ</a>
+                        </li>
+                    </ul>
+
+                </div>
+
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <h3>عضویت در خبرنامه</h3>
+                    <p> ثبت نام کنید و آخرین نکات را از طریق ایمیل دریافت کنید ، جهت ثبت نام فقط کافی ست که آدرس ایمیل را در کادر زیر وارد نمایید</p>
+                    <form class="newsletter p_relative mt-3">
+                        <input type="text" placeholder="آدرس ایمیل">
+                        <button class="submit_btn" type="submit"><i class="fab fa-telegram-plane"></i></button>
+                    </form>
+                    <ul class="fo_social mt-3 float-right">
+                        <li class="round-btn btn-whatsapp">
+                            <span>شبکه های اجتماعی :</span>
+
+                        </li>
+                        <li class="round-btn btn-whatsapp">
+                            <a href="#"><i class="fab fa-whatsapp m-1 fa-2x" aria-hidden="true"></i></a>
+
+                        </li>
+                        <li class="round-btn btn-telegram">
+                            <a href="#"><i class="fab fa-telegram-plane  m-1 fa-2x" aria-hidden="true"></i></a>
+                        </li>
+                        <li class="round-btn btn-instagram">
+                            <a href="#"><i class="fab fa-instagram m-1 fa-2x" aria-hidden="true"></i></a>
+                        </li>
+                        <li class="round-btn btn-facebook">
+                            <a href="#"><i class="fab fa-facebook-f m-1 fa-2x"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/owl.carousel.js"></script>
+    <script src="~/js/Custom.js"></script>
+    <script src="~/js/Menu.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

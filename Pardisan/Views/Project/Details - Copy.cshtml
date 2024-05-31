@@ -1,0 +1,1090 @@
+﻿@model Pardisan.ViewModels.Estate.EstateFroShow
+
+@{
+    ViewData["Title"] = "جزئیات پروژه";
+}
+
+@section styles{
+    <link href="//static.neshan.org/sdk/leaflet/1.4.0/leaflet.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/magnific-popup.css" rel="stylesheet" />
+    <!-- plugin-------------------------------------->
+    
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" integrity="sha512-vKMx8UnXk60zUwyUnUPM3HbQo8QfmNx7+ltw8Pm5zLusl1XIfwcxo8DbWCqMGKaWeNxWA8yrx5v3SaVpMvR3CA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+
+        .image-link {
+            cursor: -webkit-zoom-in;
+            cursor: -moz-zoom-in;
+            cursor: zoom-in;
+        }
+
+        /* aligns caption to center */
+        .mfp-title {
+            text-align: center;
+            padding: 6px 0;
+        }
+        
+        .shadow-effect {
+            box-shadow: 0 0 25px 10px rgba(0, 0, 0, 0.2)
+        }
+
+        #map div {
+            z-index: 1 !important;
+        }
+
+        .leaflet-container {
+            cursor: crosshair;
+        }
+
+        .zoom-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            visibility: hidden;
+        }
+
+        .zoomed-image {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+    </style>
+}
+
+
+
+
+
+
+
+<section class="container-fuid p-4 ">
+    <div class="row">
+        <div class="col-lg-5 mb-3 order-1 order-lg-0">
+            <div class="portfolio-info">
+                <div class="d-flex flex-row mb-lg-2 mb-3">
+                    <div class="Dottedstocol ml-3"></div>
+                    <div class="singletitle">
+                        <span>عنوان پروژه</span>
+                        <h1 class="text-right">@Model.Title</h1>
+                    </div>
+                </div>
+                <input value="@Model?.Id" id="id-edit-building" type="hidden" />
+                <div class="col-12" style="max-width: 80%; right: -30px;">
+                    @if (string.IsNullOrWhiteSpace(Model.AparatLink))
+                    {
+                        <img src="~/img/Engineers.jpg" class="radius20 mb-4 d-none d-md-block" />
+                    }
+                    @Html.Raw(Model.AparatLink)
+                </div>
+                <h5 class="mb-0" style="font-weight: 600">اطلاعات</h5>
+                <div class="row">
+                    <div class="col-6 px-1">
+                        <p class="fs-7"><i class="fal fa-map-marker ml-2" style="width: 30px"></i><span> </span><span style="font-size: 10px;">@Model.City</span></p>
+                    </div>
+                    <div class="col-6 px-1">
+                        <p class="fs-7"><i class="fal fa-home ml-2" style="width: 30px"></i><span style="font-size: 11px;">تعداد طبقات : </span><span style="font-size: 11px;">@Model.FloorCount</span></p>
+                    </div>
+                    <div class="col-6 px-1">
+                        <p class="fs-7"><i class="fal fa-chart-bar ml-2" style="width: 30px"></i><span style="font-size: 11px;">متراژ واحدها : </span><span style="font-size: 11px;">@Model.EstateMeterage</span></p>
+                    </div>
+                    <div class="col-6 px-1">
+                        <p class="fs-7"><i class="fal fa-chart-area ml-2" style="width: 30px"></i><span style="font-size: 11px;">تعداد واحد در طبقه  : </span><span style="font-size: 11px;">@Model.UnitInFlorCount</span></p>
+                    </div>
+                    <div class="col-6 px-1">
+                        <p class="fs-7"><i class="fal fa-chart-scatter ml-2" style="width: 30px"></i><span style="font-size: 11px;">تعداد کل واحد ها: </span><span style="font-size: 11px;">@Model.TotalUnits</span></p>
+                    </div>
+
+
+                    <div class="col-6 px-1">
+                        <p class="fs-7"><i class="fal fa-user ml-2" style="width: 30px"></i><span style="font-size: 11px;">نوع کاربری : </span><span style="font-size: 11px;">@Model.UsageType</span></p>
+                    </div>
+                    @if (Model.Status != 0)
+                    {
+                        <div class="col-6 px-1">
+                            <p class="fs-7"><i class="fal fa-calendar ml-2" style="width: 30px"></i><span style="font-size: 11px;">تاریخ شروع : </span><span style="font-size: 11px;">@Model.StartDateForShow</span></p>
+                        </div>
+                    }
+
+
+                    @if (Model.Status == 0)
+                    {
+                        <div class="col-6 px-1">
+                            <p class="fs-7"><i class="fal fa-calendar ml-2" style="width: 30px"></i><span style="font-size: 11px;">تاریخ اتمام : </span><span style="font-size: 11px;">@Model.ProjectCompletionDateForShow</span></p>
+                        </div>
+                    }
+
+
+                    <div class="col-6 px-1">
+                        <p class="fs-7"><i class="fal fa-info ml-2" style="width: 30px"></i><span style="font-size: 11px;">وضعیت پروژه : </span><span style="font-size: 11px;">@(Model.Status == 0 ? "تکمیل شده" : "جاری")</span></p>
+                    </div>
+                </div>
+                <h5 class="mb-0 mt-3" style="font-weight: 600">آپشن ها</h5>
+                <div class="row">
+                    @if (Model.AbNama == true)
+                    {
+                        <div class="col-6 px-1">
+                            <p class="fs-7">
+                                <i class="fal fa-solid fa-water fa-shake  ml-2" style="width: 30px;color: #CCC;background:rgba(0,0,0,0.8)"></i>
+                                <span>آبنمای مدرن </span>
+                            </p>
+                        </div>
+                    } @if (Model.Flower == true)
+                    {
+                        <div class="col-6 px-1">
+                            <p class="fs-7">
+                                <i class="fal fa-solid fa-flower fa-shake  ml-2" style="width: 30px;color: #CCC;background:rgba(0,0,0,0.8)"></i>
+                                <span>گل آرایی </span>
+                            </p>
+                        </div>
+                    }
+                    @if (Model.Fibr == true)
+                    {
+                        <div class="col-6 px-1">
+                            <p class="fs-7">
+                                <i class="fal fa-solid fa-network-wired fa-shake  ml-2" style="width: 30px;color: #CCC;background:rgba(0,0,0,0.8)"></i>
+                                <span>اجرای فیبر نوری </span>
+                            </p>
+                        </div>
+                    }
+                    @if (Model.QRCode == true)
+                    {
+                        <div class="col-6 px-1">
+                            <p class="fs-7">
+                                <i class="fal fa-solid fa-qrcode fa-shake  ml-2" style="width: 30px;color: #CCC;background:rgba(0,0,0,0.8)"></i>
+                                <span>QRcode</span>
+                            </p>
+                        </div>
+                    }
+                    @if (Model.Camera == true)
+                    {
+                        <div class="col-6 px-1">
+                            <p class="fs-7">
+                                <i class="fal fa-solid fa-camera fa-shake  ml-2" style="width: 30px;color: #CCC;background:rgba(0,0,0,0.8)"></i>
+                                <span>دوربین مدار بسته</span>
+                            </p>
+                        </div>
+                    }
+                    @if (Model.Security == true)
+                    {
+                        <div class="col-6 px-1">
+                            <p class="fs-7">
+                                <i class="fal fa-sign-in fa-camera fa-shake  ml-2" style="width: 30px;color: #CCC;background:rgba(0,0,0,0.8)"></i>
+                                <span>سیستم امنیتی کد ورود</span>
+                            </p>
+                        </div>
+                    }
+                    @if (Model.Shomineh == true)
+                    {
+                        <div class="col-6 px-1">
+                            <p class="fs-7">
+                                <i class="fal fa-fireplace fa-camera fa-shake  ml-2" style="width: 30px;color: #CCC;background:rgba(0,0,0,0.8)"></i>
+                                <span>شومینه برقی</span>
+                            </p>
+                        </div>
+                    }
+                    @if (Model.Alachigh == true)
+                    {
+                        <div class="col-6 px-1">
+                            <p class="fs-7">
+                                <i class="fal fa-home fa-camera fa-shake  ml-2" style="width: 30px;color: #CCC;background:rgba(0,0,0,0.8)"></i>
+                                <span>آلاچیق</span>
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+
+            <section class="product-gallery">
+                <div class="gallery">
+                    <div class="gallery-item" style="margin-top: 56px;">
+                        <div>
+                            <ul class="gallery-actions">
+                                <li class="option-social">
+
+                                    <!-- Modal-option-social
+                                        -->
+                                    <div class="modal fade" id="option-social" tabindex="-1"
+                                         role="dialog" aria-labelledby="exampleModalCenterTitle"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered"
+                                             role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title"
+                                                        id="exampleModalCenterTitle">
+                                                        اشتراک گذاری
+                                                    </h5>
+                                                    <button type="button" class="close"
+                                                            data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+
+                                                    <div class="share-options">
+
+
+                                                        <div class="share-social-buttons text-center">
+                                                            <!-- AddToAny BEGIN -->
+                                                            <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+
+                                                                <!-- <a class="a2a_button_facebook" href=""></a> -->
+                                                                <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+                                                                <a class="a2a_button_whatsapp"></a>
+                                                                <a class="a2a_button_telegram"></a>
+                                                                <!-- <a class="a2a_button_skype"></a> -->
+                                                                <a class="a2a_button_twitter"></a>
+                                                            </div>
+
+
+
+                                                            <a class="a2a_button_telegram share-social share-social-telegram"></a>
+                                                            <!-- <a class="a2a_button_skype"></a> -->
+                                                            <a class="a2a_button_twitter share-social-twitter"></a>
+
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-share-col">
+                                                        <input class="ui-url-field" type="url"
+                                                               readonly="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+
+                                <li class="Three-dimensional">
+                                    <a href="#" class="btn-option btn-Three-dimensional"
+                                       data-toggle="modal" data-target="#more-product">
+                                        
+                                        <div class="singletitle">
+                                            <span>نمایش بیشتر</span>
+                                        </div>
+                                    </a>
+                                    <div class="modal fade" id="more-product" tabindex="-1"
+                                         role="dialog" aria-labelledby="exampleModalCenterTitle"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered more-product"
+                                             role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    <div id="custom-events">
+                                                        @foreach (var item in Model.Images)
+                                                        {
+                                                            string url = "https://api.pardisan-mc.com" + item.Url;
+                                                            
+                                                            <a href="@url" class="with-caption image-link">
+                                                                <img src="@url" width="172" height="105" />
+                                                            </a>
+                                                        }
+
+
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="gallery-item" >
+                        <div class="gallery-img">
+                            <a>
+                                @if (string.IsNullOrEmpty(Model.Image))
+                                {
+                                    <img class="zoom-img" id="img-product-zoom"
+                                     data-zoom-image="productDefaultImage"
+                                     width="411"
+                                     heigh="411" />
+                                }
+                                else
+                                {
+                                    string url = "https://api.pardisan-mc.com" + Model.Image;
+                                    <img class="zoom-img" id="img-product-zoom"
+                                     src="@url"
+                                     data-zoom-image="@Model.Image"
+                                     width="700"
+                                     heigh="500" 
+                                     style="padding-bottom: 10px;" />
+                                }
+
+                                <div id="gallery_01f" style="width:590px;float:right; ">
+
+                            </a>
+                            <ul class="gallery-items owl-carousel owl-theme" id="gallery-slider">
+
+                                @foreach (var item in Model.Images)
+                                {
+                                    string url = "https://api.pardisan-mc.com" + item.Url;
+                                    <li class="item">
+
+                                        <a href="#" class="elevatezoom-gallery  active" data-update=""
+                                       data-image="@url"
+                                       data-zoom-image="@url">
+                                            <img src="@url"
+                                             width="100"
+                                             style="height:112px" />
+                                        </a>
+                                    </li>
+                                }
+
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+        @* <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        <div class="row">
+        <div class="col-lg-12 w-100">
+
+        <div class="swiper-container w-100 h-100" style="overflow: hidden">
+        <div class="swiper-wrapper w-100 h-100">
+        @foreach (var i in Model.Images)
+        {
+        if (i.Url != null)
+        {
+        string url = "https://api.pardisan-mc.com" + i.Url;
+        int index = i.Id.Value;
+        <div class="swiper-slide w-100 d-flex align-items-center justify-content-center" data-id="@i">
+        <img id="@i" src="@url" />
+        </div>
+        }
+
+
+        }
+        </div>
+        <div class="swiper-scrollbar"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+        </div>
+        </div>
+
+        </div>
+        </div>
+        </div>
+        </div>
+
+
+        <div class="col-lg-7 mb-3 pr-3 order-0 order-lg-1">
+        <div class="singletitle">
+        <span>گالری تصاویر</span>
+        </div>
+        <div class="row">
+        <div class="col-lg-2">
+        <div class="w-100 image-project-list">
+
+        @foreach (var i in Model.Images)
+        {
+        if (i.Url != null)
+        {
+        <a class="image-popup" href="https://api.pardisan-mc.com@(i.Url)" style="cursor: pointer">
+        <img style="width: 120px; height: 90px; border-radius: 15px" alt="Image cap [110%x180]" src="https://api.pardisan-mc.com@(i.Url)" class="py-2 radius15">
+        </a>
+        }
+        }
+        </div>
+        </div>
+        <div class="col-lg-10" style="cursor: pointer">
+        <div style="overflow: hidden">
+        <img src="https://api.pardisan-mc.com@(Model.Image)" class="py-2 w-100" style="transition: all 0.3s; border-radius: 15px;" id="big-image" />
+        </div>
+        </div>
+        </div>
+
+
+        </div>*@
+    </div>
+    <div class="row my-3">
+        @if (Model.Description != null)
+        {
+            <div class="col-lg-12">
+
+                <h3 class="IRANSans_Bold mb-2">توضیحات پروژه</h3>
+                <div class="line_bottom"></div>
+                <p class="text-justify">
+
+                    @Html.Raw(Model.Description)
+                </p>
+
+            </div>
+        }
+
+        <div class="col-lg-4 form-group my-3">
+            @if (Model.Showbuilding == true)
+            {
+                <div class="building w-100 position-relative" dir="ltr">
+                    <img src="https://clipart-library.com/image_gallery/223359.png" id="image-roof" class=" mb-1 w-100" style="height: 100px; display: none" />
+                    <div class="info-building" id="info-roof" style="position: absolute;top: 40px; left: 35%; display: none">
+                        <div class="d-flex align-items-center">
+                            <div class="mx-2" style="height:15px;width:15px; background-color: lawngreen;opacity: 0.3;"></div>
+
+                            <p class="mb-0">واحد های موجود</p>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="mx-2" style="height:15px;width:15px; background-color: rgba(255,192,203, 0.5);"></div>
+
+                            <p>واحد های فروخته شده</p>
+                        </div>
+                    </div>
+                    <div id="floors" class="floors"></div>
+                </div>
+            }
+
+        </div>
+        @{
+            var yourStyle = "";
+            if (Model.Floors.Count() == 3)
+            {
+                yourStyle = "height: 300px !important;";
+            }
+            else if (Model.Floors.Count() == 0)
+            {
+                yourStyle = "height: 400px";
+                //any other conditions and logic
+            }
+            else if (Model.Floors.Count() == 4)
+            {
+                yourStyle = "height: 270px";
+                //any other conditions and logic
+            }
+            else if (Model.Floors.Count() == 5)
+            {
+                yourStyle = "height: 330px";
+
+            }
+            else if (Model.Floors.Count() == 6)
+            {
+                yourStyle = "height: 370px";
+
+            }
+            else if (Model.Floors.Count() == 7)
+            {
+                yourStyle = "height: 420px";
+
+            }
+            else if (Model.Floors.Count() == 8)
+            {
+                yourStyle = "height: 475px";
+
+            }
+            else if (Model.Floors.Count() == 9)
+            {
+                yourStyle = "height: 530px";
+
+            }
+            else if (Model.Floors.Count() == 10)
+            {
+                yourStyle = "height: 570px";
+
+            }
+            else if (Model.Floors.Count() == 11)
+            {
+                yourStyle = "height: 630px";
+
+            }
+            else if (Model.Floors.Count() == 12)
+            {
+                yourStyle = "height: 670px";
+
+            }
+            else
+            {
+                yourStyle = "height: 300px";
+
+            }
+        }
+        @if (Model.Lat != 0)
+        {
+            if (Model.Showbuilding == true)
+            {
+                <div class="col-lg-8  form-group my-3 px-4">
+                    <label class="fw-bold fs-6">موقعیت مکانی</label>
+                    <label class="text-danger mr-1"></label>
+                    <div id="map" class="" style="@yourStyle"></div>
+                    <input type="hidden" asp-for="Lat" />
+                    <input type="hidden" asp-for="Long" />
+                    <span class="text-muted"></span>
+                </div>
+            }
+            else
+
+            {
+
+                <div class="container-fluid">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-10 form-group my-3 px-4">
+                            <label class="fw-bold fs-6">موقعیت مکانی</label>
+                            <label class="text-danger mr-1"></label>
+                            <div id="map" class="" style="@yourStyle"></div>
+                            <input type="hidden" asp-for="Lat" />
+                            <input type="hidden" asp-for="Long" />
+                            <span class="text-muted"></span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            }
+        }
+
+    </div>
+
+    </div>
+    @* <label class="fw-bold fs-6">موقعیت مکانی</label>
+    <div id="map" class="h-300px"></div>
+    <input type="hidden" asp-for="Lat" />
+    <input type="hidden" asp-for="Long" />*@
+    @*<div class="row pt-3">
+    <div class="col-lg-12">
+
+    <h3 class="IRANSans_Bold mb-2">سایر تصاویر پروژه</h3>
+    <div class="line_bottom"></div>
+    <div class="d-flex flex-md-row flex-column  my-xl-0 my-4 float-xl-left copic popup-gallery">
+    <a href="~/img/other-pic.jpg" class="grid m-2">
+    <figure class="effect-ruby radius10">
+    <img src="~/img/other-pic.jpg" alt="img01" class="radius10 img-fluid">
+    </figure>
+    </a>
+    <a href="~/img/Lotus-M-G-5.jpg" class="grid m-2">
+    <figure class="effect-ruby radius10">
+    <img src="~/img/Lotus-M-G-5.jpg" alt="img01" class="radius10 img-fluid">
+    </figure>
+    </a>
+    <a href="~/img/other-pic3.jpg" class="grid m-2">
+    <figure class="effect-ruby radius10">
+    <img src="~/img/other-pic3.jpg" alt="img01" class="radius10 img-fluid">
+    </figure>
+    </a>
+    <a href="~/img/other-pic4.jpg" class="grid m-2">
+    <figure class="effect-ruby radius10">
+    <img src="~/img/other-pic4.jpg" alt="img01" class="radius10 img-fluid">
+    </figure>
+    </a>
+
+    </div>
+
+    </div>
+    </div>*@
+</section>
+@section scripts{
+    <script src="~/lib/jquery.magnific-popup.min.js"></script>
+    <script src="//static.neshan.org/sdk/leaflet/1.4.0/leaflet.js" type="text/javascript"></script>
+  
+
+    <script>
+
+        $('.with-caption').magnificPopup({
+		type: 'image',
+		closeBtnInside: false,
+		mainClass: 'mfp-with-zoom mfp-img-mobile',
+  
+		image: {
+			verticalFit: true,
+			titleSrc: function(item) {
+        
+        var caption = item.el.attr('title');
+        
+        var pinItURL = "https://pinterest.com/pin/create/button/";
+        
+        // Refer to https://developers.pinterest.com/pin_it/
+        pinItURL += '?url=' + 'http://dimsemenov.com/plugins/magnific-popup/';
+        pinItURL += '&media=' + item.el.attr('href');
+        pinItURL += '&description=' + caption;
+
+        return caption;
+			}
+		},
+  
+  
+    gallery: {
+      enabled: true 
+    }, 
+  
+  
+  
+    callbacks: {
+      open: function() {
+        this.wrap.on('click.pinhandler', '.pin-it', function(e) {
+
+          // This part of code doesn't work on CodePen, as it blocks window.open
+          // Uncomment it on your production site, it opens a window via JavaScript, instead of new page
+          /*window.open(e.currentTarget.href, "intent", "scrollbars=yes,resizable=yes,toolbar=no,location=yes,width=550,height=420,left=" + (window.screen ? Math.round(screen.width / 2 - 275) : 50) + ",top=" + 100);
+
+          
+          return false;*/
+        });
+      },
+      beforeClose: function() {
+
+       //this.wrap.off('click.pinhandler');
+      }
+    }
+  
+	});
+
+        
+        var selectedImage = null;
+        function selectImage(element) {
+            // Remove 'active' class from the previously selected image
+            if (selectedImage !== null) {
+                $(selectedImage).parent().removeClass('activ');
+            }
+
+            // Add 'active' class to the clicked image's parent button
+            $(element).parent().addClass('activ');
+
+            // Update the selectedImage variable
+            selectedImage = element;
+
+            // Retrieve and display the color name
+
+        }
+        const selections = [];
+        var setUnitId = null;
+        var isMerg = false;
+        var isUnitStyle = false;
+
+        const getMergedUnitDirection = (unit, floors) => {
+            //// find  current , top and bottom floors
+            const currentFloor = floors[unit?.floorNumber]
+            //
+            const topFloor =
+                currentFloor?.floorNumber !== floors?.length - 1
+                    ? floors[currentFloor?.floorNumber + 1] : undefined
+
+            //
+            const bottomFloor = currentFloor?.floorNumber !== 0 ? floors[currentFloor?.floorNumber - 1] : undefined
+            const currentUnitIndex = currentFloor?.estateUnits?.findIndex((u) => u.clientIdForUnit === unit.clientIdForUnit)
+            if (currentUnitIndex > 0) {
+                if (currentFloor.estateUnits[currentUnitIndex - 1]?.mergedUnitId === unit.clientIdForUnit) {
+                    return 'left'
+                }
+            }
+            if (currentUnitIndex < currentFloor?.estateUnits?.length - 1) {
+                if (currentFloor.estateUnits[currentUnitIndex + 1]?.mergedUnitId === unit.clientIdForUnit) return 'right'
+            }
+            if (topFloor?.estateUnits.length === currentFloor.estateUnits.length) {
+                if (topFloor?.estateUnits[currentUnitIndex]?.mergedUnitId === unit.clientIdForUnit) return 'top'
+            }
+            if (bottomFloor?.estateUnits.length === currentFloor.estateUnits.length) {
+                if (bottomFloor?.estateUnits[currentUnitIndex]?.mergedUnitId === unit.clientIdForUnit) return 'bottom'
+            }
+            return 'none'
+            //
+        }
+        function getTextUnitStyle(unit, floors) {
+            let style = "";
+
+            //if (mergedUnit) {
+            //    const mergedUnitDirection = getMergedUnitDirection(mergedUnit);
+
+            //    if (mergedUnitDirection === "bottom") {
+
+            //        style += "transform: translateY(40px)";
+            //    } else if (mergedUnitDirection === "top") {
+
+            //                            style += "transform: translateY(20px)";
+
+            //    } else if (mergedUnitDirection === "right") {
+            //        style += "border-top: 1px solid #000;";
+
+            //        style += "margin: 5px 5px 5px 0px;";
+            //    } else if (mergedUnitDirection === "left") {
+
+            //        style += "margin: 5px 0px 5px 5px;";
+            //    } else {
+            //        style = "none;";
+            //    }
+            //    return style;
+            //}
+
+            if (getMergedUnitDirection(unit, floors) === "top") {
+
+                style += "transform: translateY(-20px);";
+                style += "z-index: 1000;";
+            } else if (getMergedUnitDirection(unit, floors) === "bottom") {
+
+                style += "transform: translateY(20px);";
+                style += "z-index: 1000;";
+
+
+            } else if (getMergedUnitDirection(unit, floors) === "right") {
+
+                style += "transform: translateX(50%);";
+                style += "left: 24%;"
+                style += "z-index: 1000;";
+            }
+            else if (getMergedUnitDirection(unit, floors) == 'left') {
+                style += "transform: translateX(-50%);";
+                style += "left: -24%;"
+                style += "z-index: 1000;";
+
+            }
+            else {
+                style = "none;";
+            }
+
+            return style;
+
+        }
+        function getUnitBorderStyle(unit, floors) {
+            let style;
+            const mergedUnitDirection = getMergedUnitDirection(unit, floors);
+
+            if (mergedUnitDirection === "top") {
+                style += "border-right: 1px solid #000;";
+                style += "border-left: 1px solid #000;";
+                style += "border-top: 0px solid #fff;";
+                style += "border-bottom: 1px solid #000;";
+                style += "border-bottom-left-radius: 0.5rem;";
+                style += "border-bottom-right-radius: 0.5rem;";
+                style += "border-top-left-radius: 0;";
+                style += "border-top-right-radius: 0;";
+                style += "margin: 0px 5px 5px 5px;";
+            } else if (mergedUnitDirection === "bottom") {
+                style += "border-right: 1px solid #000;";
+                style += "border-left: 1px solid #000;";
+                style += "border-top: 1px solid #000;";
+                style += "border-bottom: 0px solid #fff;";
+                style += "border-top-left-radius: 0.5rem;";
+                style += "border-top-right-radius: 0.5rem;";
+                style += "border-bottom-left-radius: 0;";
+                style += "border-bottom-right-radius: 0;";
+                style += "margin: 5px 5px 0px 5px;";
+            } else if (mergedUnitDirection === "right") {
+                style += "border-right: 0px solid #fff;";
+                style += "border-left: 1px solid #000;";
+                style += "border-top: 1px solid #000;";
+                style += "border-bottom: 1px solid #000;";
+                style += "border-top-right-radius: 0;";
+                style += "border-bottom-right-radius: 0;";
+                style += "border-top-left-radius: 0.5rem;";
+                style += "border-bottom-left-radius: 0.5rem;";
+                style += "margin: 5px 0px 5px 5px;";
+            } else if (mergedUnitDirection === "left") {
+                style += "border-top: 1px solid #000;";
+                style += "border-right: 1px solid #000;";
+                style += "border-bottom: 1px solid #000;";
+                style += "border-left: 0px solid #fff;";
+                style += "border-top-left-radius: 0rem;";
+                style += "border-bottom-left-radius: 0rem;";
+                style += "margin: 5px 5px 5px 0px;";
+            } else {
+                style = "none;";
+            }
+
+            return style;
+        }
+
+        function firstUnitStyle(item) {
+            let style = "";
+
+
+
+            if (item.isEmptyUnit == false) {
+                if (item.floorNumber == 0) {
+                    style += "background-color:rgba(100, 149, 237, 0.2);";
+
+                } else {
+                    style += "background-color: rgba(124, 252, 0, 0.2);";
+
+                }
+
+
+            }
+            else if (item.isEmptyUnit == true) {
+                if (item.floorNumber == 0) {
+                    style += "background-color: rgba(255,192,203, 0.4); ";
+
+                } else {
+                    style += "background-color:  rgba(255,192,203, 0.4);";
+
+                }
+
+
+            }
+            else {
+                style += "none;";
+            }
+
+            return style;
+        }
+
+        function isUnitEmptyHandle(isEmpty) {
+            if (isEmpty == true) {
+                return '                    <div class="d-flex align-items-center"> < div class="mx-2" style = "height:15px;width:15px; background-color: lawngreen;opacity: 0.3;" > </div>< p class="mb-0" > واحد موجود < /p>< /div>'
+            } else {
+                return ' <div class="d-flex align-items-center"> < div class="mx-2" style = "height:15px;width:15px; background-color: cornflowerblue;opacity: 0.3;" > </div> < p > واحد فروخته شده < /p> < /div>'
+            }
+        }
+
+        function isFloorTitleStyled(floor) {
+            const findUnitInFloor = floor.estateUnits
+                .filter((u) => u.floorNumber == floor.floorNumber);
+
+            const UnitInFloor = findUnitInFloor.filter(a => a.mergedUnitId !== null)
+
+            console.log(UnitInFloor)
+
+
+            return ''
+        }
+
+
+        function updateSelectOptions() {
+
+
+            $("#floors").empty();
+
+            for (var i = selections.length - 1; i >= 0; i--) {
+                $("#floors").append(
+                    `<div class='floor-item col-10'>
+
+                                                                                                                                                                                                                                      <div class='unit-item-setting' style='${isFloorTitleStyled(selections[i])} ${selections[i]?.floorName.length >= 7 ? 'left: -40px;' : 'left: -26px;'} top: 10px' dir='rtl'>
+
+                                                                                                                                                                                                        <h6 class='text-success' style='font-size: 13px'>${selections[i]?.floorName || ''}</h6>
+
+                                                                                                                                                                                                      </div>
+                                                                                                                                                                                                              <div class='units-list'>
+                                                                                                                                                                                                      ${selections[
+                        i
+                    ].estateUnits
+                        .map(
+                            (
+                                item
+                            ) => `
+                                                                                                                                                                                                                <div class='unit-item position-relative py-2' id='unit-item${item.id
+                                }' data-id='${item.id
+                                }' style='${getUnitBorderStyle(
+                                    item, selections
+                                ) +
+                                firstUnitStyle(
+                                    item
+                                ) + 'height: 40px; padding: 0'
+                                }'>
+                                                                                                                                                                                                                  <div class='d-flex position-relative flex-column' style='${getTextUnitStyle(item, selections)}'>
+                                                                                                                                                                                                                                                            <h6 style='font-size: 10px' dir='rtl'>${item.meterage !== 0 ? item.name + ' : ' + item.meterage + ' متر ' : ''} </h6>
+
+                                                                                                                                                                                                                  </div>
+
+                                                                                                                                                                                                                </div>
+
+                                                                                                                                                                                                            `
+                        )
+                        .join(
+                            ""
+                        )}
+
+                                                                                                                                                                                                      </div>
+                                                                                                                                                                                                    </div>`
+                );
+            }
+        }
+
+        $(document).ready(function () {
+
+
+            // When a thumbnail is clicked
+            $('.elevatezoom-gallery').on('click', function (e) {
+                e.preventDefault(); // Prevent default link behavior
+
+                // Get the URL of the clicked thumbnail
+                var imageUrl = $(this).data('image');
+
+                // Update the src and data-zoom-image attributes of the main image
+                $('#img-product-zoom').attr('src', imageUrl);
+                $('#img-product-zoom').attr('data-zoom-image', imageUrl);
+
+                // Remove 'active' class from all thumbnails
+                $('.elevatezoom-gallery').removeClass('active');
+
+                // Add 'active' class to the clicked thumbnail
+                $(this).addClass('active');
+            });
+
+            var inputId = document.getElementById('id-edit-building');
+            const imageRoof = document.getElementById('image-roof')
+            const infoRoof = document.getElementById('info-roof')
+
+
+            if (inputId.value) {
+
+                $.ajax({
+                    type: "POST",
+                    url: '/Project/GetById?id=' + inputId.value,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+
+
+                        if (data.floors.length !== 0) {
+                            imageRoof.style.display = 'block'
+                            infoRoof.style.display = 'block'
+                        }
+
+                        data.floors.forEach(obj => {
+                            var objectValues = Object.values(obj)
+                            selections.push(obj)
+                        })
+
+                        updateSelectOptions()
+                    },
+                    error: (e) => {
+                        console.log(e)
+                    }
+                });
+
+                //const res = fetch()
+
+            }
+            KTDocsAdd.init();
+
+
+        })
+    
+
+        var KTDocsAdd = function () {
+            var map, marker = null;
+            const locationChanged = function (e) {
+                fetch(`https://api.neshan.org/v4/reverse?lat=${e.lat}&lng=${e.lng}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Api-Key': 'service.6JJqS1dMExBteluzRuL4zlIDzVXb7cieW2FO3SBI'
+                    },
+                }).then(response => response.json())
+                    .then(result => {
+                        document.getElementById('Lat').value = e.lat;
+                        document.getElementById('Long').value = e.lng;
+                        let addressElement = document.getElementById('Address');
+                        addressElement.value = result.formatted_address;
+                        //KTUtil.scrollTo(addressElement, 150);
+                        //addressElement.focus();
+                    }).catch(error => console.log(error));
+            };
+
+
+            return {
+                init: function () {
+                    const defaultLat = document.getElementById('Lat').value == '' ? 35.698367 : document.getElementById('Lat').value;
+                    const defaultLng = document.getElementById('Long').value == '' ? 51.395378 : document.getElementById('Long').value;
+                    map = new L.Map('map', {
+                        key: 'web.DvgRmwDJDGt5lyqNPnYQ8FOkyIaofLrShHKDennS',
+                        maptype: 'standard-day',
+                        poi: true,
+                        traffic: true,
+                        center: [defaultLat, defaultLng],
+                        zoom: 12
+                    });
+                    console.log('map is runnig')
+                    if (document.getElementById('Lat').value != '' && document.getElementById('Long').value != '') {
+                        let latlng = new L.LatLng(defaultLat, defaultLng);
+                        marker = L.marker(latlng)
+                            .bindPopup(`<span class="font-sans-serif"><b>مختصات جغرافیایی:</b><br>${latlng.toString()}</span>`)
+                            .addTo(map);
+                        map.flyTo(latlng, 13);
+                    }
+                    //map.on('click', (e) => {
+                    //    if (marker == null) {
+                    //        marker = L.marker(e.latlng)
+                    //            .bindPopup(`<span class="font-sans-serif"><b>مختصات جغرافیایی:</b><br>${e.latlng.toString()}</span>`)
+                    //            .addTo(map);
+                    //    } else {
+                    //        marker.setLatLng(e.latlng);
+                    //    }
+                    //    map.flyTo(e.latlng, 13);
+                    //    locationChanged(e.latlng);
+                    //});
+                }
+            }
+        }();
+
+        $(document).ready(function () {
+
+        });
+
+        //var myMap = new L.Map('map', {
+        //    key: 'web.7e9f4ee8e0054ed09d6bb46d53f8d96a',
+        //    maptype: 'dreamy',
+        //    poi: true,
+        //    traffic: false,
+        //    zoom: 14
+        //});
+        function getImageElement(image, id) {
+            $('#big-image').attr('src', image);
+        }
+        var swiper = new Swiper('.swiper-container', {
+            loop: true,
+            slideToClickedSlide: true,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev'
+            },
+            scrollbar: {
+                el: '.swiper-scrollbar'
+            }
+        });
+
+                                                                                                                        //var imageList = document.querySelectorAll('.image-click-list div img');
+                                                                                                                        //imageList.forEach(function (item) {
+                                                                                                                        //    item.addEventListener('click', function () {
+                                                                                                                        //        var id = this.parentElement.getAttribute('data-id');
+                                                                                                                        //        var slideIndex = getSlideIndexById(id);
+                                                                                                                        //        swiper.slideTo(slideIndex);
+                                                                                                                        //    });
+                                                                                                                        //});
+
+                                                                                                                        //swiper.on('slideChange', function () {
+                                                                                                                        //    var activeSlideIndex = swiper.realIndex;
+                                                                                                                        //    var activeSlide = swiper.slides[activeSlideIndex];
+                                                                                                                        //    var activeSlideId = activeSlide.getAttribute('data-id');
+                                                                                                                        //    setActiveImage(activeSlideId);
+                                                                                                                        //});
+
+                                                                                                                        //function setActiveImage(id) {
+                                                                                                                        //    var activeImage = document.querySelector('.image-click-list div[data-id="' + id + '"]');
+                                                                                                                        //    var activeImageSrc = activeImage.querySelector('img').getAttribute('src');
+                                                                                                                        //    var activeImages = document.querySelectorAll('.image-click-list div img');
+
+                                                                                                                        //    activeImages.forEach(function (image) {
+                                                                                                                        //        image.classList.remove('active');
+                                                                                                                        //    });
+
+                                                                                                                        //    activeImage.querySelector('img').classList.add('active');
+                                                                                                                        //}
+
+                                                                                                                        //function getSlideIndexById(id) {
+                                                                                                                        //    var slides = swiper.slides;
+                                                                                                                        //    for (var i = 0; i < slides.length; i++) {
+                                                                                                                        //        var slide = slides[i];
+                                                                                                                        //        var slideId = slide.getAttribute('data-id');
+                                                                                                                        //        if (slideId === id) {
+                                                                                                                        //            return i;
+                                                                                                                        //        }
+                                                                                                                        //    }
+                                                                                                                        //    return -1;
+                                                                                                                        //}
+
+                                                                                                                        //// Set the initial active image
+                                                                                                                        //setActiveImage(0);
+    </script>
+}

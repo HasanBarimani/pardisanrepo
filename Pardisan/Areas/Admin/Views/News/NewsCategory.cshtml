@@ -1,0 +1,116 @@
+﻿@model Pardisan.ViewModels.News.UpsertNewsCategoryVM
+
+
+@{
+    Layout = "_AdminLayout";
+}
+
+@section styles{
+
+    <link rel="stylesheet" href="~/admin/vendors/lightbox/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="~/admin/vendors/dataTable/dataTables.min.css" type="text/css">
+}
+
+@section scripts{
+    <script src="/admin/vendors/lightbox/jquery.magnific-popup.min.js"></script>
+    <script src="/admin/vendors/dataTable/jquery.dataTables.min.js"></script>
+    <script src="/admin/vendors/dataTable/dataTables.bootstrap4.min.js"></script>
+    <script src="/admin/vendors/dataTable/dataTables.responsive.min.js"></script>
+    <script src="~/Admin/js/News/newsCategory.js"></script>
+}
+
+
+<div class="card card-custom">
+    <div class="card-header">
+        <div class="card-title">
+            <span class="card-icon">
+                <i class="flaticon2-supermarket text-primary"></i>
+            </span>
+            <h3 class="card-label">دسته بندی ها</h3>
+        </div>
+        <div class="card-toolbar">
+            <div class="btn-group">
+                <button onclick="CreateCategory()" class="btn btn-primary font-weight-bolder">ثبت رکورد جدید</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class=" d-flex justify-content-end card-toolbar custom-switch custom-checkbox-danger ml-auto">
+            <input type="checkbox" class="custom-control-input" id="showdelted" name="delted" onchange="SwitchDeleted()">
+            <label class="custom-control-label mx-2" for="showdelted">حذف شده ها</label>
+        </div>
+        <form class="d-none mx-2" id="CategoriesSearchForm" asp-action="getcategories" asp-controller="posts" method="POST">
+            <input type="hidden" name="title" class="form-control datatable-input" />
+        </form>
+        <div class="table-responsive">
+            <table class="ajax-data-table table table-hover table-striped" id="Table">
+                <thead>
+                    <tr>
+                        <th class="all">#</th>
+                        <th class="all">عنوان</th>
+                        <th class="all">تاریخ ثبت</th>
+                        <th class="all">اقدامات</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="CreateCategory-Modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <label class="font-size-h4 font-weight-bolder text-dark">اطلاعات دسته بندی</label>
+            </div>
+            <div class="modal-body">
+                <form asp-action="UpsertNewsCategory" method="post" id="create-category" enctype="multipart/form-data" novalidate="novalidate">
+                    <input type="hidden" name="id" />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="h5 font-weight-bolder text-dark mb-3">عنوان</label>
+                                <input type="text" class="form-control" name="title" placeholder="ویژه" required />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="d-flex justify-content-between align-items-end">
+                    <button type="reset" class="btn btn-secondary mx-2" data-bs-dismiss="modal">بستن پنجره</button>
+                    <button type="button" class="btn btn-primary font-weight-bold" id="create-category-submit">ثبت</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="UpdateCategory-Modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <label class="font-size-h4 font-weight-bolder text-dark">اطلاعات دسته بندی</label>
+            </div>
+            <div class="modal-body">
+                <form asp-action="UpsertNewsCategory" method="post" id="update-category" enctype="multipart/form-data" novalidate="novalidate">
+                    <input type="hidden" asp-for="@Model.Id" />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="h5 font-weight-bolder text-dark mb-3">عنوان</label>
+                                <input type="text" class="form-control" asp-for="@Model.Title" placeholder="ویژه" required />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="d-flex justify-content-between align-items-end">
+                    <button type="reset" class="btn btn-secondary mx-2" data-bs-dismiss="modal">بستن پنجره</button>
+                    <button type="button" class="btn btn-primary font-weight-bold" id="update-category-submit">ثبت</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

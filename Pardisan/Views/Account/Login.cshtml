@@ -1,0 +1,148 @@
+﻿@model Pardisan.ViewModels.LoginVM
+
+
+@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+
+<html direction="rtl" dir="rtl" style="direction: rtl">
+<!--begin::Head-->
+<head>
+    <base href="../../../">
+    <title>صفحه ورود</title>
+    <meta charset="utf-8" />
+    <!--begin::Fonts-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
+    <!--end::Fonts-->
+    <!--begin::Global Stylesheets Bundle(used by all pages)-->
+    <link href="~/lib/Admin/assets/plugins/global/plugins.bundle.rtl.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/Admin/assets/css/style.bundle.rtl.css" rel="stylesheet" type="text/css" />
+    <!--end::Global Stylesheets Bundle-->
+</head>
+<!--end::Head-->
+<!--begin::Body-->
+<body id="kt_body" class="bg-body">
+    <!--begin::Main-->
+    <!--begin::Root-->
+    <div class="d-flex flex-column flex-root">
+        <!--begin::احراز هویت - ورود -->
+        <div class="d-flex flex-column flex-column-fluid bgi-position-y-bottom position-x-center bgi-no-repeat bgi-size-contain bgi-attachment-fixed mt-5" style="background-image: url(assets/media/illustrations/sketchy-1/14.png)">
+            <!--begin::Content-->
+            <div class="d-flex flex-center flex-column flex-column-fluid p-10 pb-lg-20">
+                <!--begin::Logo-->
+                @*<a href="../../demo1/dist/index.html" class="mb-12">
+                        <img alt="Logo" src="~/lib/Admin/assets/media/logos/logo-1.svg" class="h-40px" />
+                    </a>*@
+                <!--end::Logo-->
+                <!--begin::Wrapper-->
+                <div class="w-lg-500px bg-body rounded shadow-sm p-10 p-lg-15 mx-auto">
+                    <!--begin::Form-->
+                    <form role="form" method="post" asp-controller="account" asp-action="SignInAdmin" class="form w-100" novalidate="novalidate" id="form" data-kt-redirect-url="../../demo1/dist/index.html">
+                        <input asp-for="ReturnUrl" hidden />
+                        <!--begin::Heading-->
+                        <div class="text-center mb-10">
+                            <!--begin::Title-->
+                            <h1 class="text-dark mb-3">ورود  به پنل مدیریت</h1>
+                            <!--end::Title-->
+                        </div>
+                        <!--begin::Heading-->
+                        <!--begin::Input group-->
+                        <div class="fv-row mb-10">
+                            <!--begin::Tags-->
+                            <label class="form-label fs-6 fw-bolder text-dark">ایمیل</label>
+                            <!--end::Tags-->
+                            <!--begin::Input-->
+                            <input asp-for="UserName" class="form-control form-control-lg form-control-solid" type="text" placeholder="admin@gmail.com" />
+                            <!--end::Input-->
+                        </div>
+                        <!--end::Input group-->
+                        <!--begin::Input group-->
+                        <div class="fv-row mb-10">
+                            <!--begin::Wrapper-->
+                            <div class="d-flex flex-stack mb-2">
+                                <!--begin::Tags-->
+                                <label class="form-label fw-bolder text-dark fs-6 mb-0">کلمه عبور</label>
+                                <!--end::Tags-->
+                            </div>
+                            <!--end::Wrapper-->
+                            <!--begin::Input-->
+                            <input asp-for="Password" class="form-control form-control-lg form-control-solid" type="password" placeholder="*******" />
+                            <!--end::Input-->
+                            <!--begin::Link-->
+                            <div class="w-100 d-flex flex-row justify-content-end align-items-stretch mt-2">
+                                <a href="../../demo1/dist/authentication/layouts/basic/password-reset.html" class="link-primary fs-6  ">فراموشی رمز عبور</a>
+                            </div>
+                            <!--end::Link-->
+                        </div>
+                        <!--end::Input group-->
+                        <!--begin::Actions-->
+                        <div class="text-center">
+                            <!--begin::ثبت button-->
+                            <button type="submit" id="signin-btn" class="btn btn-lg btn-primary w-100 mt-4 mb-5">
+                                <span class="indicator-label">ورود</span>
+                                <span class="indicator-progress">
+                                    لطفا صبر کنید...
+                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                </span>
+                            </button>
+                            <!--end::ثبت button-->
+                        </div>
+                        <!--end::Actions-->
+                    </form>
+                    <!--end::Form-->
+                </div>
+                <!--end::Wrapper-->
+            </div>
+            <!--end::Content-->
+        </div>
+        <!--end::احراز هویت - ورود-->
+    </div>
+    <!--end::Root-->
+    <!--end::Main-->
+    <!--begin::Javascript-->
+    <script src="~/lib/Admin/assets/plugins/global/plugins.bundle.js"></script>
+    <script src="~/lib/Admin/assets/js/scripts.bundle.js"></script>
+    <!--end::Global Javascript Bundle-->
+    <!--begin::Page سفارشی Javascript(used by this page)-->
+    @*<script src="~/lib/Admin/assets/js/custom/authentication/sign-in/general.js"></script>*@
+    <!--end::Page custom Javascript-->
+    <script>
+        toastr.options = {
+            timeOut: 2345,
+            progressBar: true,
+            showMethod: "slideDown",
+            hideMethod: "slideUp",
+            showDuration: 200,
+            hideDuration: 200
+        };
+        $('form').submit(function (e) {
+            $(".preloader").fadeIn(800);
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function (data) {
+                    if (data.status == 0) {
+                        toastr.error(data.error);
+                    }
+                    else if (data.status == 1) {
+                        toastr.success("خوش آمدید");
+                        window.location.replace(data.returnUrl);
+                    }
+                    else {
+                        toastr.warning(data.error);
+                        //window.location.reload();
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

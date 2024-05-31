@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewData["Title"] = "پروژه";
+}
+@inject Pardisan.Data.ApplicationDbContext _context;
+@{
+    var settings = _context.Settings.Where(x => x.IsActive.Value).ToList();
+    var ProjectPic = settings.FirstOrDefault(x => x.Key == "ProjectPic").Value;
+    var projectTitle = settings.FirstOrDefault(x => x.Key == "titleForProject").Value;
+
+}
+
+
+<section class="banner_area" style="background:url(@ProjectPic)">
+    <div class="container">
+        <h1 class="text-white IRANSans_Bold">@projectTitle</h1>
+        <div class="breadcrumb_content">
+            <ul>
+                <li><a asp-action="index" asp-controller="home">صفحه اصلی</a></li>
+                <li><a asp-action="index" asp-controller="project">@projectTitle</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+<section class="container p-md-5 p-4  po2 hot-posts">
+    <div class="d-flex flex-row mb-lg-2 mb-3">
+        <div class="Dottedstocol ml-3"></div>
+        <div class="singletitle">
+            <h1 class="text-right"> @projectTitle</h1>
+        </div>
+    </div>
+    <div class="row pt-3">
+        @foreach (var item in Model)
+        {
+
+            <div class="col-xl-3 col-md-6 mb-4 smallerView">
+                <a asp-controller="Project" asp-action="details" asp-route-id="@item.Id" class="grid">
+                    <figure class="effect-ruby">
+                        <img src="@item.Image" />
+                        <figcaption>
+                        </figcaption>
+                    </figure>
+                </a>
+                <a style="color: #000" asp-controller="Project" asp-action="details" class="text-center d-flex flex-column justify-content-center align-items-center" asp-route-id="@item.Id">
+                    <h3 style="font-weight: 600">@item.Title</h3>
+                    <span >@item.Address</span>
+                </a>
+            </div>
+        }
+    </div>
+   
+</section>
+
+

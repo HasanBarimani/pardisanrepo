@@ -1,0 +1,106 @@
+﻿@model Pardisan.ViewModels.NewsVM
+@using DNTPersianUtils.Core;
+
+@inject Pardisan.Interfaces.INewsRepository _newsRepository;
+@{
+    var catModel = await _newsRepository.GetAllNewsCategory();
+    var newsModel = await _newsRepository.GetAllNews();
+}
+
+@{
+    ViewData["Title"] = "جزئیات خبر";
+}
+
+
+
+<section class="banner_area">
+    <div class="container">
+        <h1 class="text-white IRANSans_Bold">جزئیات مطالب</h1>
+        <div class="breadcrumb_content">
+            <ul>
+                <li><a asp-action="index" asp-controller="home">صفحه اصلی</a></li>
+                <li><a asp-action="index" asp-controller="news">اخبار</a></li>
+                <li><a asp-action="details" asp-controller="news" asp-route-Id="@Model.Id">@Model.Title</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+
+<section class="container p-4 ">
+    <div class="row">
+        <div class="col-xl-3 order-xl-0 order-1 mb-3">
+            <div class="py-2">
+                <div class="cati-blog  mb-4">
+                    <div class="d-flex flex-row justify-content-between bg-warning text-white py-2 px-4 mt-3 IRANSans_Medium bright radius10">
+                        <h2>دسته بندی ها</h2>
+                    </div>
+                    <ul class="list-unstyled p-3">
+                        @foreach (var cat in catModel.Data.NewsCategory)
+                        {
+                            <li><a href="#"><span> @cat.Title </span></a></li>
+                        }
+                    </ul>
+                </div>
+                <div class="thumb-post mb-4">
+                    <h2 class="bg-warning text-white  py-2 px-4 my-2 bright radius10 IRANSans_Medium">آخرین مطالب</h2>
+                    @foreach (var news in newsModel.Data.News) {
+                        <ul class="fa12 p-3">
+                            <li>
+                                <a asp-action="details" asp-controller="news" asp-route-id="@news.Id" class="d-flex flex-row">
+                                    <div><img src=@news.Image></div>
+                                    <div class="m-2">
+                                        <p>@news.Title</p>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    }
+                </div>
+
+                <div class="pcolor my-4">
+                    <h2 class="bg-warning text-white  py-2 px-4 my-2 bright radius10 IRANSans_Medium">برچسب ها</h2>
+                    <ul class="p-3">
+                        @foreach (var cat in Model.Tags.Split(",").ToList())
+                        {
+                            <li><a href="#"><span> @cat </span></a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-9  order-xl-1 order-0 my-3">
+            <div class="p-sm-2">
+                <div class="item mb-4">
+                    <div class="row">
+                        <div class="col-lg-12 detailblog">
+                            <div class="d-flex flex-row mb-2">
+
+                                <div class="singletitle">
+                                    <h1 class="text-right">@Model.Title </h1>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-lg-row flex-column b-detay text-secondary mb-4">
+                                <span class="mx-lg-2"><i class="fal fa-clock ml-1"></i>@Model.CreatedAt.ToPersianDateTextify(true)</span>
+                            </div>
+
+                            <img src=@Model.Image class="img-fluid mb-4  radius15" />
+                            <p class="bg-light p-3 my-3 y-right">@Model.Describtion</p>
+                            <p class="text-justify">@Html.Raw(Model.Content)</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="float-left">
+                                <a class="btn bg-light py-1 px-4 m-1 fa12 radius25" href="javascript:;"><i class="fal fa-share"></i></a>
+                                <a class="btn bg-light py-1 px-4 m-1 fa12 radius25" href="javascript:;"><i class="fal fa-share-alt"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

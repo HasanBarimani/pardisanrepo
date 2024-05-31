@@ -1,0 +1,54 @@
+﻿@model Pardisan.Models.Page
+@using DNTPersianUtils.Core;
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+@inject Pardisan.Data.ApplicationDbContext _context;
+@{
+    var settings = _context.Settings.Where(x => x.IsActive.Value).ToList();
+    var ProjectPic = settings.FirstOrDefault(x => x.Key == "ProjectPic").Value;
+
+}
+
+
+<section class="banner_area" style="background:url(@ProjectPic)">
+    <div class="container">
+        <h1 class="text-white IRANSans_Bold">@Model.Title</h1>
+        <div class="breadcrumb_content">
+            <ul>
+                <li><a asp-action="index" asp-controller="home">صفحه اصلی</a></li>
+                <li><a href="/page/@Model.Url">@Model.Title</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+
+<section class="container p-4 ">
+    <div class="row">
+        <div class="col-xl-12  order-xl-1 order-0 my-3">
+            <div class="p-sm-2">
+                <div class="item mb-4">
+                    <div class="row">
+                        <div class="col-lg-12 detailblog">
+                            <div class="d-flex flex-row mb-2">
+
+                                <div class="singletitle">
+                                    <h1 class="text-right">@Model.Title </h1>
+                                </div>
+                            </div>
+
+                            @*<div class="d-flex flex-lg-row flex-column b-detay text-secondary mb-4">
+                                <span class="mx-lg-2"><i class="fal fa-clock ml-1"></i>@Model.CreatedAt.ToPersianDateTextify(true)</span>
+                            </div>*@
+
+                            <p class="text-justify">@Html.Raw(Model.Content)</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

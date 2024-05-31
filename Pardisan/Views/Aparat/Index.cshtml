@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "پروژه";
+}
+@inject Pardisan.Data.ApplicationDbContext _context;
+@{
+    var settings = _context.Settings.Where(x => x.IsActive.Value).ToList();
+    var ProjectPic = settings.FirstOrDefault(x => x.Key == "ProjectPic").Value;
+    var titleForVideos = settings.FirstOrDefault(x => x.Key == "titleForVideos").Value;
+
+}
+
+
+<section class="banner_area" style="background:url(@ProjectPic)">
+
+    <div class="container">
+        <h1 class="text-white IRANSans_Bold">@titleForVideos</h1>
+        <div class="breadcrumb_content">
+            <ul>
+                <li><a asp-action="index" asp-controller="home">صفحه اصلی</a></li>
+
+            </ul>
+        </div>
+    </div>
+</section>
+<section class="container p-md-5 p-4  po2 hot-posts">
+    <div class="d-flex flex-row mb-lg-2 mb-3">
+        <div class="Dottedstocol ml-3"></div>
+        <div class="singletitle">
+            <h1 class="text-right"> ویدیو ها</h1>
+        </div>
+    </div>
+    <div class="row pt-3">
+
+        @foreach (var item in Model)
+        {
+
+            <div class="col-lg-4 col-md-4 col-sm-12 mb-3 mb-md-0 text-center" style="border-radius:8px">
+                @Html.Raw(item.AparatLink)
+                <span>@item.Title</span>
+            </div>
+            
+        }
+
+    </div>
+
+</section>
+
+

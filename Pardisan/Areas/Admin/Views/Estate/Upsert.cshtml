@@ -1,0 +1,310 @@
+﻿@model Pardisan.ViewModels.Estate.UpsertEstateVM
+
+@{
+    Layout = "_AdminLayout";
+}
+
+@{
+    ViewBag.Title = "ثبت پروژه";
+    if (Model != null)
+    {
+        ViewBag.Title = "ویرایش پروژه: " + Model.Title;
+    }
+}
+@section styles{
+    <link href="//static.neshan.org/sdk/leaflet/1.4.0/leaflet.css" rel="stylesheet" type="text/css" />
+    <style>
+        #map div {
+            z-index: 1 !important;
+        }
+
+        .leaflet-container {
+            cursor: crosshair;
+        }
+    </style>
+    <link href="~/css/bootstrap-tagsinput.css" rel="stylesheet" asp-append-version="true" />
+    <script src="~/ckeditor/ckeditor2.js"></script>
+    <link href="~/date/persianDatepicker-default.css" rel="stylesheet" />
+}
+
+@section scripts{
+    <script src="//static.neshan.org/sdk/leaflet/1.4.0/leaflet.js" type="text/javascript"></script>
+    <script src="~/js/bootstrap-tagsinput.js" asp-append-version="true"></script>
+    <script src="~/Admin/js/Estate/upsertEstate.js" asp-append-version="true"></script>
+    <script src="~/date/persianDatepicker.js"></script>
+
+    <script>
+        $(function () {
+            FullCkEditor('Content');
+        });
+        $(document).ready(function () {
+            theEditor.setData(document.getElementById("ContentValue").value);
+        });
+
+        $("#StartDate, .StartDate").persianDatepicker();
+        $("#ProjectCompletionDate, .ProjectCompletionDate").persianDatepicker();
+
+        function readURL(input) {
+            if (input.files && input.files.length > 0) {
+                for (var i = 0; i < input.files.length; i++) {
+                    var reader = new FileReader();
+                    $('#imgViewer').empty();
+                    reader.onload = function (e) {
+                        $('#imgViewer').attr('src', e.target.result);
+                        $('#imgViewer').append($('<img>', { src: e.target.result, width: '50px', height: '50' }));
+                    }
+                    reader.readAsDataURL(input.files[i]);
+                }
+            }
+        }
+        $("#imageUploader").change(function () {
+            readURL(this);
+        });
+
+
+    </script>
+
+}
+
+<div class="container card card-custom card-sticky pb-5 " id="kt_page_sticky_card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between w-100">
+            <div class="card-title">
+
+                <h3 class="card-label">
+                    @(Model?.Id != null ? ViewBag.Title = "ویرایش پروژه: " + Model.Title : ViewBag.Title = "ثبت پروژه")
+                </h3>
+            </div>
+            <div class="card-toolbar btn-group">
+                <a asp-action="index" class="btn btn-outline-primary font-weight-bold ">بازگشت</a>
+                @if (Model?.Id != null)
+                {
+                    <button id="submit-formEdit" type="button" class="btn btn-primary font-weight-bold">تغییر</button>
+                }
+                else
+                {
+                    <button id="submit-formCreate" type="button" class="btn btn-primary font-weight-bold">ثبت</button>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <form asp-action="Upsert" method="post" class=" form" id="formCreate" enctype="multipart/form-data" onsubmit="return false">
+            @if (Model != null)
+            {
+                if (Model?.Id != 0)
+                {
+                    <input type="hidden" hidden asp-for="Id" />
+                }
+                else
+                {
+                    <input type="hidden" hidden asp-for="Id" value="0" />
+
+                }
+            }
+            else
+            {
+                <input type="hidden" hidden asp-for="Id" value="0" />
+            }
+            <div class="row">
+                <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">عنوان </label>
+                        <input type="text" class="form-control" asp-for="Title" placeholder="عنوان" required />
+                    </div>
+                </div>
+                <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">کد </label>
+                        <input type="text" class="form-control" asp-for="Code" placeholder="کد" required />
+                    </div>
+                </div>
+                <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">محتوا </label>
+                        <div id="toolbar-container"></div>
+                        <input id="ContentValue" value="@Model?.Description" hidden type="hidden" />
+                        <div id="Content" name="Content" class="form-control border"></div>
+                    </div>
+                </div>
+                <div class="col-md-3 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">تعداد طبقه </label>
+                        <input type="text" class="form-control" asp-for="FloorCount" placeholder="تعداد طبقه" required />
+                    </div>
+                </div>
+                <div class="col-md-3 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">متراژ واحد ها (مترمربع)  </label>
+                        <input type="text" class="form-control" asp-for="EstateMeterage" placeholder="متراژ واحد ها (مترمربع) " required />
+                    </div>
+                </div>
+                <div class="col-md-3 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">تعداد واحد در طبقه  </label>
+                        <input type="text" class="form-control" asp-for="UnitInFlorCount" placeholder="تعداد واحد در طبقه " required />
+                    </div>
+                </div>
+                <div class="col-md-3 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">تعداد کل واحد ها   </label>
+                        <input type="text" class="form-control" asp-for="TotalUnits" placeholder="تعداد کل واحد ها " required />
+                    </div>
+                </div>
+                <div class="col-md-3 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">تاریخ شروع </label>
+                        @if (Model != null)
+                        {
+                            <input readonly type="text" class="form-control" asp-for="StartDate" value="@Model.StartDateForShow" placeholder="تاریخ شروع" required />
+                        }
+                        else
+                        {
+                            <input readonly type="text" class="form-control" asp-for="StartDate" placeholder="تاریخ شروع" required />
+                        }
+                    </div>
+                </div>
+                <div class="col-md-3 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">تاریخ اتمام پروژه </label>
+                        @if (Model != null)
+                        {
+                            <input readonly type="text" class="form-control" asp-for="ProjectCompletionDate" value="@Model.CompletionDateForShow" placeholder="تاریخ شروع" required />
+                        }
+                        else
+                        {
+                            <input readonly type="text" class="form-control" asp-for="ProjectCompletionDate" placeholder="تاریخ اتمام پروژه" required />
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-3 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">نوع کاربری </label>
+                        <input type="text" class="form-control" asp-for="UsageType" placeholder="نوع کاربری" required />
+                    </div>
+                </div>
+
+                <div class="col-md-3 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">لینک آپارات</label>
+                        <input type="text" class="form-control" asp-for="AparatLink" placeholder="لینک آپارات" required />
+                    </div>
+                </div>
+                <div class="col-md-12 form-group my-3">
+                    <label class="fw-bold fs-6">موقعیت مکانی</label>
+                    <label class="text-danger mr-1">*</label>
+                    <div id="map" class="h-300px"></div>
+                    <input type="hidden" asp-for="Lat" />
+                    <input type="hidden" asp-for="Long" />
+                    <span class="text-muted">برای انتخاب موقعیت مکانی، روی نقشه کلیک کنید</span>
+                </div>
+
+                <div class="col-md-6 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">محل پروژه</label>
+                        <input type="text" class="form-control" asp-for="Province" placeholder="محل پروژه" required />
+                    </div>
+                </div>
+
+                <div class="col-md-6 my-4 d-flex form-group">
+                    <label class="h5 font-weight-bolder text-dark mb-1 mx-3">وضعیت پروژه:</label>
+                    <div class="custom-control custom-radio mx-2">
+                        <input type="radio" id="Complete" name="Status" value="@(ProjectStatus.Complete)" @(Model?.Status == ProjectStatus.Complete ? "checked" : "") class="custom-control-input">
+                        <label class="custom-control-label" for="Complete">تکمیل شده</label>
+                    </div>
+                    <div class="custom-control custom-radio mx-2">
+                        <input type="radio" id="Active" name="Status" value="@(ProjectStatus.Active)" @(Model?.Status == ProjectStatus.Active ? "checked" : "") class="custom-control-input">
+                        <label class="custom-control-label" for="Active">جاری</label>
+                    </div>
+                </div>
+                <div class="col-md-3 my-4 d-flex form-group">
+                    <div>
+                        <label class="custom-control-label fs-4" for="AbNama">آبنمای مدرن</label>
+                        <input class="mx-1" type="checkbox" asp-for="AbNama" />
+
+                    </div>
+                </div>
+
+                <div class="col-md-3 my-4 d-flex form-group">
+                    <div>
+                        <label class="custom-control-label fs-4" for="Fibr">اجرای فیبر نوری</label>
+                        <input class="mx-1" type="checkbox" asp-for="Fibr" />
+
+                    </div>
+                </div>
+                <div class="col-md-3 my-4 d-flex form-group">
+                    <div class="d-flex align-items-center">
+                        <label class="custom-control-label fs-4" for="QRCode">شناسه Q-Rcode</label>
+                        <input class="mx-1" type="checkbox" asp-for="QRCode" />
+
+                    </div>
+                </div>
+
+                <div class="col-md-3 my-4 d-flex form-group">
+                    <div>
+                        <label class="custom-control-label fs-4" for="Camera">دوربین مدار بسته</label>
+                        <input class="mx-1" type="checkbox" asp-for="Camera" />
+
+                    </div>
+                </div>
+                <div class="col-md-3 my-4 d-flex form-group">
+                    <div>
+                        <label class="custom-control-label fs-4" for="Security">سیستم امنیتی کد ورود</label>
+                        <input class="mx-1" type="checkbox" asp-for="Security" />
+
+                    </div>
+                </div>
+
+                <div class="col-md-3 my-4 d-flex form-group">
+                    <div>
+                        <label class="custom-control-label fs-4" for="Shomineh">شومینه برقی</label>
+                        <input class="mx-1" type="checkbox" asp-for="Shomineh" />
+
+                    </div>
+                </div>
+                <div class="col-md-3 my-4 d-flex form-group">
+                    <div>
+                        <label class="custom-control-label fs-4" for="Flower">گل آرایی</label>
+                        <input class="mx-1" class="mx-1" type="checkbox" asp-for="Flower" />
+
+                    </div>
+                </div>
+
+                <div class="col-md-3 my-4 d-flex form-group">
+                    <div>
+                        <label class="custom-control-label fs-4" for="Alachigh">آلاچیق</label>
+                        <input class="mx-1" type="checkbox" asp-for="Alachigh" />
+
+                    </div>
+                </div>
+
+                <div class="col-md-6 form-group my-5">
+                    <label class="h5 font-weight-bolder text-dark mb-1">گالری</label>
+                    <br />
+                    <label for="imageUploader" class="btn btn-light mx-3 mt-2">انتخاب عکس</label>
+                    <input asp-for="Files" class="d-none" type="file" id="imageUploader" multiple style="visibility:hidden;">
+                    @*<span class="text-justify">@Model?.ImageShow.Substring(Model.ImageShow.LastIndexOf("/") + 1)</span>*@
+                    <div class="mt-4" style="max-width: 50% !important;">
+                        <div id="imgViewer"></div>
+                        <img id="thumgbimage" class="img img-thumbnail" src="@Model?.Files" />
+                    </div>
+                </div>
+                <div class="col-md-6 form-group my-5">
+
+                    <label class="h5 font-weight-bolder text-dark mb-1">پروفایل</label>
+                    <br />
+                    <label for="Image" class="btn btn-light mx-3 mt-2">انتخاب عکس</label>
+                    <input asp-for="Image" class="d-none" type="file" style="visibility:hidden;" />
+
+                    @*<span class="text-justify">@Model?.ImageShow.Substring(Model.ImageShow.LastIndexOf("/") + 1)</span>*@
+                    <div class="mt-4" style="max-width:50% !important;">
+                        <img id="thumbimage" class="img img-thumbnail" src="@Model?.ImageShow" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

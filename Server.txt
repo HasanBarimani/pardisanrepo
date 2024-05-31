@@ -1,0 +1,10 @@
+http://85.208.255.83:8880
+
+PARDISAN:
+plesk
+username: pardisan
+password: g4TecQ06mgiHu&~c
+-----------------------------
+system
+username: pardisan
+password: 0qu7&nM@aocAdNb7

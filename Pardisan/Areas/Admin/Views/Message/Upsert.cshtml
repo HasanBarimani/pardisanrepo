@@ -1,0 +1,72 @@
+﻿@model Pardisan.ViewModels.Message.MessageVM
+
+@{
+    Layout = "_AdminLayout";
+}
+
+
+@section styles{
+    <link href="~/css/bootstrap-tagsinput.css" rel="stylesheet" asp-append-version="true" />
+    <script src="~/ckeditor/ckeditor2.js"></script>
+}
+
+@section scripts{
+    <script src="~/js/bootstrap-tagsinput.js" asp-append-version="true"></script>
+    <script src="~/Landing//upsertMessage.js" asp-append-version="true"></script>
+
+    <script>
+        $(function () {
+            FullCkEditor('Content');
+        });
+        $(document).ready(function () {
+            theEditor.setData(document.getElementById("ContentValue").value);
+        });
+    </script>
+
+}
+
+<div class="container card card-custom card-sticky pb-5 " id="kt_page_sticky_card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between w-100">
+            <div class="card-title">
+
+              @*  <h3 class="card-label">
+                    @(Model?.Id != null ? ViewBag.Title = "ویرایش صفحه: " + Model.Name : ViewBag.Title = "اضافه کردن صفحه")
+                </h3>*@
+            </div>
+            <div class="card-toolbar btn-group">
+                <a asp-controller="Message" asp-action="index" class="btn btn-outline-primary font-weight-bold ">بازگشت</a>
+               
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <form asp-action="Upsert" method="post" class=" form" id="formCreate" onsubmit="return false">
+            @if (Model?.Id != 0)
+            {
+                <input type="hidden" hidden asp-for="Id" />
+            }
+            <div class="row">
+                <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">نام </label>
+                        <input readonly disabled type="text" class="form-control" asp-for="Name"  required />
+                    </div>
+                </div>
+                <div class="col-md-12 my-4">
+                    <div class="form-group">
+                        <label class="h5 font-weight-bolder text-dark mb-3">نشانی اینترنتی</label>
+                        <input type="text" class="form-control" asp-for="Email" readonly disabled required />
+                    </div>
+                </div>
+                <div class="col-md-12 my-4">
+                   
+                    <textarea asp-for="Content" class="form-control" rows="4" readonly disabled> محتوا</textarea>
+                </div>
+
+
+            </div>
+        </form>
+    </div>
+</div>
